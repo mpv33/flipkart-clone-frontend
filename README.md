@@ -1,6 +1,8 @@
 
 # Flipkart Clone (MERN Stack)
+ ## Live : https://flipkart-clone-m.vercel.app/
 
+ 
 ![Flipkart Clone](./preview.png)
 ![Flipkart Clone](./details.png)
 ![Flipkart Clone](./cart.png)
