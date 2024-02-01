@@ -1,6 +1,4 @@
-Thank you for clarifying. Here's the revised README.md file for the Flipkart MERN Stack project:
 
-```markdown
 # Flipkart Clone (MERN Stack)
 
 ![Flipkart Clone](./preview.png)
@@ -20,8 +18,6 @@ This repository contains the codebase for a clone of the popular e-commerce plat
 - **Shopping Cart**: Allows users to add products to their cart, update quantities, and remove items.
 - **Checkout Process**: Guides users through a seamless checkout process, including address selection and payment.
 - **Payment Integration**: Supports payment via Paytm, allowing users to securely complete transactions.
-- **Order History**: Displays a history of past orders for each user.
-- **Admin Dashboard**: Offers administrators the ability to manage products, categories, users, and orders.
 
 ## Technologies Used
 
