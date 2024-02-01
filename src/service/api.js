@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { products } from '../constant/data';
 const url = process.env.API_URL
 
 export const authenticateLogin = async (user) => {
@@ -20,7 +20,9 @@ export const authenticateSignup = async (user) => {
 
 export const getProductById = async (id) => {
     try {
-        return await axios.get(`${url}/product/${id}`);
+       // return await axios.get(`${url}/product/${id}`);
+        const data=products.filter((item)=>item?.id===id)
+        return data[0]
     } catch (error) {
         console.log('Error while getting product by id response', error);
     }
