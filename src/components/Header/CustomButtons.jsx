@@ -51,6 +51,12 @@ const LoginButton = styled(Button)(({ theme }) => ({
     [theme.breakpoints.down('sm')]: {
         background: '#2874f0',
         color: '#FFFFFF'
+    },
+    '&:hover': {
+        color: '#000',
+        background: '#d3d3d3',
+        cursor: 'pointer', // Change cursor on hover
+        boxShadow: 'none',
     }
 }));
 
@@ -69,15 +75,16 @@ const CustomButtons = () => {
 
     return (
         <Wrapper>
-            {/* {
+            {
                 account ? <Profile account={account} setAccount={setAccount} /> :
                     <LoginButton variant="contained" onClick={() => openDialog()}>Login</LoginButton>
                 
-            } */}
-            {/* <Typography style={{ marginTop: 3, width: 135 }}>Become a Seller</Typography>
-            <Typography style={{ marginTop: 3 }}>More</Typography> */}
-            
-            <Container to={'/cart'}>
+            }
+            <Typography style={{ marginTop: 3, width: 135 }}>Become a Seller</Typography>
+            <Typography style={{ marginTop: 3 }}>More</Typography>
+            {
+                account && 
+                <Container to={'/cart'}>
                 <Badge
                  badgeContent={cartItems?.length} 
                  color="secondary">
@@ -85,6 +92,8 @@ const CustomButtons = () => {
                 </Badge>
                 <Typography style={{ marginLeft: 10 }}>Cart</Typography>
             </Container>
+            }
+         
             <LoginDialog open={open} setOpen={setOpen} setAccount={setAccount} />
         </Wrapper>
     )

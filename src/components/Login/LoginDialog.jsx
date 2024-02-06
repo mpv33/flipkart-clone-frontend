@@ -17,6 +17,11 @@ const LoginButton = styled(Button)`
     color: #fff;
     height: 48px;
     border-radius: 2px;
+    &:hover {
+        background: #FF7F4F; /* Change background color on hover */
+        color: #fff; /* Change text color on hover */
+        cursor: pointer; /* Change cursor on hover */
+    }
 `;
 
 const RequestOTP = styled(Button)`
@@ -65,7 +70,7 @@ const Error = styled(Typography)`
 const Image = styled(Box)`
     background: #2874f0 url(https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/login_img_c4a81e.png) center 85% no-repeat;
     width: 40%;
-    height: 100%;
+    height: 84%;
     padding: 45px 35px;
     & > p, & > h5 {
         color: #FFFFFF;
@@ -119,21 +124,30 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
     }
 
     const loginUser = async() => {
-        let response = await authenticateLogin(login);
-        if(!response) 
-            showError(true);
-        else {
-            showError(false);
-            handleClose();
-            setAccount(login.username);
+        if(login?.username && login?.password){
+            let response = await authenticateLogin(login);
+            if(!response) 
+                showError(true);
+            else {
+                showError(false);
+                handleClose();
+                setAccount(login.username);
+                setLogin(loginInitialValues)
+                localStorage.setItem('token',login.username)
+            }
         }
+        else{
+            showError(true) 
+        }
+       
     }
 
     const signupUser = async() => {
         let response = await authenticateSignup(signup);
         if(!response) return;
         handleClose();
-        setAccount(signup.username);
+        setAccount(signup.firstname);
+        localStorage.setItem('token',login.username)
     }
     
     const toggleSignup = () => {
@@ -145,6 +159,7 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
         toggleAccount(accountInitialValues.login);
         setSignup(signupInitialValues)
         showError(false)
+        
     }
 
     return (
@@ -159,8 +174,8 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
                         account.view === 'login' ? 
                         <Wrapper>
                             <TextField variant="standard" onChange={(e) => onValueChange(e)} name='username' label='Enter Email/Mobile number' />
-                            { error && <Error>Please enter valid Email ID/Mobile number</Error> }
                             <TextField variant="standard" onChange={(e) => onValueChange(e)} name='password' label='Enter Password' />
+                            { error && <Error>Please enter valid Email ID/Mobile number</Error> }
                             <Text>By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.</Text>
                             <LoginButton onClick={() => loginUser()} >Login</LoginButton>
                             <Text style={{textAlign:'center'}}>OR</Text>
@@ -175,6 +190,7 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
                             <TextField variant="standard" onChange={(e) => onInputChange(e)} name='password' label='Enter Password' />
                             <TextField variant="standard" onChange={(e) => onInputChange(e)} name='phone' label='Enter Phone' />
                             <LoginButton onClick={() => signupUser()} >Continue</LoginButton>
+                            <CreateAccount onClick={() => toggleSignup()}>Do you have already account? Just Login</CreateAccount>
                         </Wrapper>
                     }
                 </Box>

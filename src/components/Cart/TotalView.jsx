@@ -48,14 +48,16 @@ const TotalView = ({ cartItems }) => {
     const [discount, setDiscount] = useState(0)
 
     useEffect(() => {
-        totalAmount();
+        if(cartItems?.length){
+            totalAmount();
+        }
     }, [cartItems]);
-    
+
     const totalAmount = () => {
         let price = 0, discount = 0;
         cartItems.map(item => {
-            price += item.price.mrp
-            discount += (item.price.mrp - item.price.cost) 
+            price += item.price.mrp * item.quantity
+            discount += (item.price.mrp - item.price.cost) * item.quantity
         })
         setPrice(price);
         setDiscount(discount);

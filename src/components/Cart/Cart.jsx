@@ -56,23 +56,12 @@ const Cart = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
-    
-    useEffect(() => {
-        if(cartItems && id !== cartItems.id)   
-            dispatch(addToCart(id));
-    }, [dispatch, cartItems, id]);
 
     const removeItemFromCart = (id) => {
         dispatch(removeFromCart(id));
     }
 
     const buyNow = async () => {
-        // let response = await payUsingPaytm({ amount: 500, email: 'mateshwari33@gmail.com'});
-        // var information = {
-        //     action: 'https://securegw-stage.paytm.in/order/process',
-        //     params: response    
-        // }
-        // post(information);
         const msg = 'Payment integration is currently underway !';
         alert(msg);
         
