@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import { Dialog, DialogContent, TextField, Box, Button, Typography, styled } from '@mui/material';
 
-import { authenticateLogin, authenticateSignup } from '../../service/api';
-
+import { authenticateLogin, authenticateSignup, fetchUserDetails } from '../../service/api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Component = styled(DialogContent)`
     height: 70vh;
     width: 90vh;
@@ -66,7 +67,7 @@ const Error = styled(Typography)`
     font-weight: 600;
 `
 // height: 70vh;
-    
+
 const Image = styled(Box)`
     background: #2874f0 url(https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/login_img_c4a81e.png) center 85% no-repeat;
     width: 40%;
@@ -79,14 +80,13 @@ const Image = styled(Box)`
 `;
 
 const loginInitialValues = {
-    username: '',
+    email: '',
     password: ''
 };
 
 const signupInitialValues = {
     firstname: '',
     lastname: '',
-    username: '',
     email: '',
     password: '',
     phone: ''
@@ -106,14 +106,14 @@ const accountInitialValues = {
 }
 
 const LoginDialog = ({ open, setOpen, setAccount }) => {
-    const [ login, setLogin ] = useState(loginInitialValues);
-    const [ signup, setSignup ] = useState(signupInitialValues);
-    const [ error, showError] = useState(false);
-    const [ account, toggleAccount ] = useState(accountInitialValues.login);
+    const [login, setLogin] = useState(loginInitialValues);
+    const [signup, setSignup] = useState(signupInitialValues);
+    const [error, showError] = useState(false);
+    const [account, toggleAccount] = useState(accountInitialValues.login);
 
     useEffect(() => {
         showError(false);
-    }, [login])
+    }, [])
 
     const onValueChange = (e) => {
         setLogin({ ...login, [e.target.name]: e.target.value });
@@ -122,34 +122,47 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
     const onInputChange = (e) => {
         setSignup({ ...signup, [e.target.name]: e.target.value });
     }
+    const loginUser = async () => {
+        try {
+            const { data, err } = await authenticateLogin(login);
+            if (err) {
+                toast.error(err)
+                return
+            }
+            if (data?.token) {
+                localStorage.setItem('token', data.token);
+                toast.success('Login Success')
+                setTimeout(() => {
+                    setAccount(login.email);
+                    setLogin(loginInitialValues);
+                    setOpen(false);
+                }, 1000)
+            }
+        } catch (error) {
+            toast.error('Something went wrong !')
+        }
 
-    const loginUser = async() => {
-        if(login?.username && login?.password){
-            let response = await authenticateLogin(login);
-            if(!response) 
-                showError(true);
-            else {
-                showError(false);
-                handleClose();
-                setAccount(login.username);
-                setLogin(loginInitialValues)
-                localStorage.setItem('token',login.username)
+    };
+
+    const signupUser = async () => {
+        try {
+            const { data, err } = await authenticateSignup(signup);
+            if (err) {
+                toast.error(err)
+                return
+            }
+            if (data) {
+                handleClose()
+                toast.success('Signup Success')
             }
         }
-        else{
-            showError(true) 
+        catch (err) {
+            toast.error('Something went wrong !')
         }
-       
+
+
     }
 
-    const signupUser = async() => {
-        let response = await authenticateSignup(signup);
-        if(!response) return;
-        handleClose();
-        setAccount(signup.firstname);
-        localStorage.setItem('token',login.username)
-    }
-    
     const toggleSignup = () => {
         toggleAccount(accountInitialValues.signup);
     }
@@ -159,42 +172,50 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
         toggleAccount(accountInitialValues.login);
         setSignup(signupInitialValues)
         showError(false)
-        
+
+    }
+    const isFilledAll = () => {
+        return signup.email && signup.firstname && signup.lastname && signup.password && signup.phone
     }
 
     return (
         <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { maxWidth: 'unset' } }}>
             <Component>
-                <Box style={{display: 'flex', height: '100%'}}>
+                <Box style={{ display: 'flex', height: '100%' }}>
                     <Image>
                         <Typography variant="h5">{account.heading}</Typography>
-                        <Typography style={{marginTop: 20}}>{account.subHeading}</Typography>
+                        <Typography style={{ marginTop: 20 }}>{account.subHeading}</Typography>
                     </Image>
                     {
-                        account.view === 'login' ? 
-                        <Wrapper>
-                            <TextField variant="standard" onChange={(e) => onValueChange(e)} name='username' label='Enter Username' />
-                            <TextField variant="standard" onChange={(e) => onValueChange(e)} name='password' label='Enter Password' />
-                            { error && <Error>Please enter valid Email ID/Mobile number</Error> }
-                            <Text>By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.</Text>
-                            <LoginButton onClick={() => loginUser()} >Login</LoginButton>
-                            <Text style={{textAlign:'center'}}>OR</Text>
-                            <RequestOTP>Request OTP</RequestOTP>
-                            <CreateAccount onClick={() => toggleSignup()}>New to Flipkart? Create an account</CreateAccount>
-                        </Wrapper> : 
-                        <Wrapper>
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='firstname' label='Enter Firstname' />
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='lastname' label='Enter Lastname' />
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='username' label='Enter Username' />
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='email' label='Enter Email' />
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='password' label='Enter Password' />
-                            <TextField variant="standard" onChange={(e) => onInputChange(e)} name='phone' label='Enter Phone' />
-                            <LoginButton onClick={() => signupUser()} >Continue</LoginButton>
-                            <CreateAccount onClick={() => toggleSignup()}>Do you have already account? Just Login</CreateAccount>
-                        </Wrapper>
+                        account.view === 'login' ?
+                            <Wrapper>
+                                <TextField variant="standard" onChange={(e) => onValueChange(e)} name='email' label='Enter Email' />
+                                <TextField variant="standard" onChange={(e) => onValueChange(e)} name='password' label='Enter Password' />
+                                {error && <Error>Please enter valid credential number</Error>}
+                                <Text>By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.</Text>
+                                <LoginButton
+                                    onClick={() => loginUser()}
+                                    disabled={!login?.email || !login?.password}
+                                >Login</LoginButton>
+                                {/* <Text style={{textAlign:'center'}}>OR</Text>
+                            <RequestOTP>Request OTP</RequestOTP> */}
+                                <CreateAccount onClick={() => toggleSignup()}>New to Flipkart? Create an account</CreateAccount>
+                            </Wrapper> :
+                            <Wrapper>
+                                <TextField variant="standard" onChange={(e) => onInputChange(e)} name='firstname' label='Enter Firstname' />
+                                <TextField variant="standard" onChange={(e) => onInputChange(e)} name='lastname' label='Enter Lastname' />
+                                <TextField variant="standard" onChange={(e) => onInputChange(e)} name='email' label='Enter Email' />
+                                <TextField variant="standard" onChange={(e) => onInputChange(e)} name='password' label='Enter Password' />
+                                <TextField variant="standard" onChange={(e) => onInputChange(e)} name='phone' label='Enter Phone' />
+                                <LoginButton onClick={() => signupUser()}
+                                    disabled={!isFilledAll}
+                                 
+                                >Continue</LoginButton>
+                            </Wrapper>
                     }
                 </Box>
             </Component>
+            <ToastContainer />
         </Dialog>
     )
 }

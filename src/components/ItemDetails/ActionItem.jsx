@@ -11,12 +11,13 @@ const LeftContainer = styled(Box)(({ theme }) => ({
     padding: '40px 0 0 80px',
     [theme.breakpoints.down('md')]: {
         padding: '20px 40px'
-    }
+    },
+    marginRight: '18px'
 }))
 
 const Image = styled('img')({
     padding: '15px 20px',
-   // border: '1px solid #f0f0f0',
+    // border: '1px solid #f0f0f0',
     width: '95%'
 });
 
@@ -30,34 +31,27 @@ const StyledButton = styled(Button)`
 const ActionItem = ({ product }) => {
     const navigate = useNavigate();
     const { id } = product;
-        
+
     const [quantity, setQuantity] = useState(1);
     const dispatch = useDispatch();
 
     const buyNow = async () => {
         const msg = 'Payment integration is currently underway.';
         alert(msg);
-        
+
     }
 
     const addItemToCart = () => {
-        const token=localStorage.getItem('token')
-        if(token){
-            dispatch(addToCart(id, quantity));
-            navigate('/cart');
-        }
-        else{
-            alert('Please log in to access this feature. Thank you!');
-
-        }
-      
+        const token = localStorage.getItem('token')
+        dispatch(addToCart(id, quantity));
+        navigate('/cart');
     }
 
     return (
         <LeftContainer>
             <Image src={product.detailUrl} /><br />
-            <StyledButton onClick={() => addItemToCart()} style={{marginRight: 10, background: '#ff9f00'}} variant="contained"><Cart />Add to Cart</StyledButton>
-            <StyledButton onClick={() => buyNow()} style={{background: '#fb641b'}} variant="contained"><Flash /> Buy Now</StyledButton>
+            <StyledButton onClick={() => addItemToCart()} style={{ marginRight: 10, background: '#ff9f00' }} variant="contained"><Cart />Add to Cart</StyledButton>
+            <StyledButton onClick={() => buyNow()} style={{ background: '#fb641b' }} variant="contained"><Flash /> Buy Now</StyledButton>
         </LeftContainer>
     )
 }

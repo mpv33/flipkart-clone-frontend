@@ -1,32 +1,68 @@
 import axios from 'axios';
+import { products } from '../constant/data'
 const url = process.env.REACT_APP_API_BASE_URL
 
 export const authenticateLogin = async (user) => {
     try {
-        return await axios.post(`${url}/api/login`, user)
+        const response = await axios.post(`${url}/api/login`, user);
+        return {
+            data: response?.data,
+            err: null
+        }
     } catch (error) {
         console.log('Error while calling login API: ', error);
-        const msg=error.response?.data
-        alert(msg)
+        return {
+            data: null,
+            err: error.response.data.message
+        }
     }
-}
+};
 
 export const authenticateSignup = async (user) => {
     try {
-        return await axios.post(`${url}/api/signup`, user)
+        const response = await axios.post(`${url}/api/signup`, user);
+        return {
+            data: response?.data,
+            err: null
+        }
     } catch (error) {
-        console.log('Error while calling Signup API: ', error);
-        const msg=error.response?.data?.message
-        alert(msg)
+        console.log('Error while calling signup API: ', error);
+        return {
+            data: null,
+            err: error.response.data.message
+        }
     }
 }
+export const fetchUserDetails = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not found');
+        }
+        const response = await axios.get(`${url}/api/user`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return {
+            data: response.data,
+            err: null
+        }
+    } catch (error) {
+        console.log('Error while calling user details API: ', error);
+        return {
+            err: error.response.data.message,
+            data: null
+        }
+    }
+};
+
 export const getProductList = async () => {
     try {
         return await axios.get(`${url}/api/products/`);
     } catch (error) {
         console.log('Error while getting product by id response', error);
-        const msg=error.response?.data?.message
-        alert(msg)
+        return { data: products }
     }
 }
 
@@ -35,8 +71,9 @@ export const getProductById = async (id) => {
         return await axios.get(`${url}/api/product/${id}`);
     } catch (error) {
         console.log('Error while getting product by id response', error);
-        const msg=error.response?.data?.message
-        alert(msg)
+        const data=products.filter((item)=>item?.id===id)
+        return data[0]
+
     }
 }
 
