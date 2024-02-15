@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Typography, Menu, MenuItem, Box, styled } from '@mui/material';
+import { Typography, Menu, MenuItem, Box, styled ,Avatar} from '@mui/material';
 import { PowerSettingsNew } from '@mui/icons-material';
 
 const Component = styled(Menu)`
@@ -30,7 +30,11 @@ const Profile = ({ account, setAccount }) => {
     
     return (
         <>
-            <Box onClick={handleClick}><Typography style={{ marginTop: 2,cursor:'pointer' }}>{account}</Typography></Box>
+            <Box onClick={handleClick}><Typography style={{ marginTop: 0,cursor:'pointer' }}>
+                <Avatar sx={{ bgcolor: 'primary' }}>
+                {account?.split('')[0]}
+                </Avatar>
+                </Typography></Box>
             <Component
                 anchorEl={open}
                 open={Boolean(open)}

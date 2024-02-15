@@ -131,6 +131,7 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
             }
             if (data?.token) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user',login.email)
                 toast.success('Login Success')
                 setTimeout(() => {
                     setAccount(login.email);
@@ -152,8 +153,11 @@ const LoginDialog = ({ open, setOpen, setAccount }) => {
                 return
             }
             if (data) {
-                handleClose()
+              
                 toast.success('Signup Success')
+                setTimeout(()=>{
+                    handleClose()
+                },2000)
             }
         }
         catch (err) {
