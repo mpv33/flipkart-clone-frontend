@@ -2,6 +2,8 @@ import axios from 'axios';
 import { products } from '../constant/data'
 const url = process.env.REACT_APP_API_BASE_URL
 
+//const url='https://flipkart-clone-server-m.vercel.app'
+
 export const authenticateLogin = async (user) => {
     try {
         const response = await axios.post(`${url}/api/login`, user);

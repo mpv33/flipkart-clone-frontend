@@ -76,7 +76,7 @@ const CustomButtons = () => {
        if(token && user){
         setAccount(user)  
        }
-    }, [])
+    }, [account])
 
     const openDialog = () => {
         setOpen(true);
